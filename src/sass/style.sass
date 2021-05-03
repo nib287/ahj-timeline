@@ -1,0 +1,69 @@
+@import "nullstyle.sass"
+
+html
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif
+body
+    background-image: url(../img/origin.jpg)
+    display: flex
+    justify-content: center
+    align-items: center 
+      
+.main 
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    margin: 0 auto
+    padding: 10px
+    width: 900px
+    height: 85vh
+    background-image: url(../img/ahoy.jpg)
+    box-shadow: 2px 2px 15px rgba(11, 43, 156, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5)
+    border: 5px solid  rgb(255, 255, 255)
+    border-radius: 10px
+
+.messages 
+    messages_text
+    height: 95%
+    overflow-y: scroll
+    &::-webkit-scrollbar
+        width: 6px
+        box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.2) inset
+        background-color: #f9f9fd
+        border-radius: 10px  
+    &::-webkit-scrollbar-thumb 
+        border-radius: 10px
+        background: linear-gradient(180deg, #2562c4, #bedef3)     
+
+.messages__box
+    display: flex
+    justify-content: space-between
+    padding: 10px
+    background-color: rgb(255, 255, 255)
+    border-radius: 10px
+    margin: 0 10px 10px 0
+
+.messages__text
+    margin-bottom: 10px    
+
+.form
+    margin-top: 10px
+    height: 5%
+
+.form__wrapper    
+    display: flex
+    align-items: center
+    background-color: rgb(255, 255, 255)
+    padding: 5px 5px 5px 5px
+    border-radius: 20px   
+    
+.form__input
+    padding: 0 10px 0 10px
+    width: 100%
+    height: 100% 
+    
+.button 
+    margin-left: 5px
+    width: 30px
+    height: 30px
+    background-color: rgb(234, 245, 251)
+    border-radius: 30px          
