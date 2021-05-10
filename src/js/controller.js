@@ -142,16 +142,23 @@ export default class Controller {
     }
     
     videoListener() {
-        const videoOptions = {
-            width: { ideal: 3072 },
-            height: { ideal: 1620 },
-            facingMode: { exact: "environment" }
+        let videoOptions = null;
+        const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+        const computerOptions = 'true'
+        const mobileOptions = {
+            width: { ideal: 1280 },
+            height: { ideal: 1024 },
+            facingMode: "environment"
         }
-
+        
+        isMobile ? videoOptions = mobileOptions : videoOptions = computerOptions;
+       
         this.videoButton.addEventListener('click', () => {
             this.toggleButtons();
             this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', videoOptions);
         });
-    }
-
+    } 
+    
 } 
+
+// { facingMode: { exact: "user" }
