@@ -1,5 +1,4 @@
 * {
-  padding: 0;
   margin: 0;
   border: 0;
 }
@@ -62,28 +61,16 @@ html {
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 
-body {
-  background-image: url(../img/origin.jpg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin: 0 auto;
   padding: 10px;
-  width: 900px;
-  height: 85vh;
-  background-image: url(../img/ahoy.jpg);
-  box-shadow: 2px 2px 15px rgba(11, 43, 156, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5);
-  border: 5px solid white;
-  border-radius: 10px;
 }
 
 .messages {
+  padding: 0;
   height: 95%;
   overflow-y: scroll;
 }
@@ -107,27 +94,36 @@ body {
   margin: 0 10px 10px 0;
 }
 
+.messages__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .messages__text {
   margin-bottom: 10px;
 }
 
+.messages__coordinates, .messages__time {
+  font-size: 9px;
+  font-weight: bold;
+  color: #7e98b9;
+}
+
 .form {
+  width: 100%;
   margin-top: 10px;
   height: 5%;
 }
 
 .form__wrapper {
   display: flex;
-  align-items: center;
+  padding-left: 10px;
   background-color: white;
-  padding: 5px 5px 5px 5px;
   border-radius: 20px;
 }
 
 .form__input {
-  padding: 0 10px 0 10px;
   width: 100%;
-  height: 100%;
 }
 
 .button {
@@ -136,4 +132,153 @@ body {
   height: 30px;
   background-color: #eaf5fb;
   border-radius: 30px;
+  box-shadow: 1px 1px 3px rgba(154, 147, 140, 0.5);
+}
+
+.modal {
+  position: absolute;
+  padding: 10px;
+  background-color: white;
+}
+
+.modal__open {
+  visibility: visible;
+  transform: translateY(-50%);
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.modal__close {
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.modal__text {
+  margin: 10px 0 10px 0;
+}
+
+label, .modal__input {
+  display: block;
+}
+
+.modal__input {
+  margin: 10px 0 10px 0;
+  padding: 10px;
+  width: 100%;
+  background-color: #eaf5fb;
+  box-shadow: 1px 1px 3px rgba(154, 147, 140, 0.5);
+  border-radius: 30px;
+}
+
+.modal__button {
+  float: right;
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 30px;
+  background-color: #eaf5fb;
+  box-shadow: 1px 1px 3px rgba(154, 147, 140, 0.5);
+}
+
+.background {
+  filter: blur(3px);
+  transition: filter 0.5s;
+}
+.background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2355a7;
+  opacity: 0.3;
+}
+
+.error {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  max-width: 200px;
+  color: #c21919;
+  font-weight: bold;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.error__open {
+  visibility: visible;
+  transform: translateY(50%);
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.error__close {
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.audio {
+  margin-bottom: 10px;
+}
+
+.form__timer {
+  line-height: 2;
+  margin-right: 10px;
+}
+
+@media (max-width: 419px) {
+  .main {
+    height: 100%;
+    min-width: 320px;
+    background-image: url(../img/ahoy.jpg);
+  }
+
+  .modal {
+    top: 30%;
+    margin: 0 10px 0 10px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
+
+  .form__input {
+    padding: 0 5px 0 5px;
+  }
+
+  audio {
+    max-width: 220px;
+  }
+}
+@media (min-width: 420px) {
+  body {
+    background-image: url(../img/origin.jpg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .main {
+    width: 900px;
+    height: 85vh;
+    background-image: url(../img/ahoy.jpg);
+    box-shadow: 2px 2px 15px rgba(11, 43, 156, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5), 2px 2px 15px rgba(154, 147, 140, 0.5);
+    border: 5px solid white;
+    border-radius: 10px;
+  }
+
+  .form__wrapper {
+    padding: 5px 5px 5px 5px;
+  }
+
+  .modal {
+    width: 400px;
+    border-radius: 20px;
+  }
+
+  .hidden {
+    display: none;
+  }
 }

@@ -1,10 +1,10 @@
 export default class Create {
-    element(box, text, latitude, longitude, date) {
+    element(box, text, coordinates, date) {
         box.insertAdjacentHTML('beforeend', `
             <li class="messages__box">
-                <div>
+                <div class="messages__wrapper">
                     <p class="messages__text">${text}</p>
-                    <span class="messages__coordinates">[${latitude}, ${longitude}]</span>
+                    <span class="messages__coordinates">[${coordinates}]</span>
                 </div>
                 <time class="messages__time">${date}</time>   
             </li>
