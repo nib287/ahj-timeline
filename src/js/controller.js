@@ -142,9 +142,15 @@ export default class Controller {
     }
     
     videoListener() {
+        const videoOptions = {
+            width: { ideal: 3072 },
+            height: { ideal: 1620 },
+            facingMode: { exact: "environment" }
+        }
+
         this.videoButton.addEventListener('click', () => {
             this.toggleButtons();
-            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', { facingMode: { exact: "environment" } });
+            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', videoOptions);
         });
     }
 
