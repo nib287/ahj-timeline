@@ -144,7 +144,7 @@ export default class Controller {
     videoListener() {
         this.videoButton.addEventListener('click', () => {
             this.toggleButtons();
-            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', true);
+            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', { facingMode: "user" });
         });
     }
 
