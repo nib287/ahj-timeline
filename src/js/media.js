@@ -10,6 +10,8 @@ export default class Media {
         this.timerId = null;
         this.sec = 0;
         this.min = 0;
+        this.recorder = null;
+        this.chunks = [];
     }
 
     createAudioElement(box, src, coordinates, date) {
@@ -60,6 +62,51 @@ export default class Media {
         this.min = 0;
     }
 
+    recorderStartListener(stream) {
+        this.recorder.addEventListener('start', (evt) => {
+            this.runTimer();
+            
+            const saveStream = () => {
+                this.save = 'save';
+                this.recorder.stop();
+                stream.getTracks().forEach(track => track.stop());
+                this.saveButton.removeEventListener('click', saveStream);
+                this.cancelButton.removeEventListener('click', stopStream);
+            }
+            const stopStream = () => {
+                this.recorder.stop();
+                stream.getTracks().forEach(track => track.stop());
+                this.cancelButton.removeEventListener('click', stopStream);
+                this.saveButton.removeEventListener('click', saveStream);
+            }
+            
+            this.saveButton.addEventListener('click', saveStream);
+            this.cancelButton.addEventListener('click', stopStream);
+        });
+    }
+
+    recorderAvailableListener() {
+        this.recorder.addEventListener("dataavailable", (evt) => {
+            this.chunks.push(evt.data); 
+        });
+    }
+
+    recorderStopListener(box, coordinates, date) {
+        this.recorder.addEventListener('stop', (evt) => {
+            this.stopTimer();
+            
+            if(this.save === 'save') {
+                const blob = new Blob(this.chunks);
+                const audioSrc = URL.createObjectURL(blob);
+                this.createAudioElement(box, audioSrc, coordinates, date);
+                this.messages.lastElementChild.scrollIntoView(true);
+                this.save = null;
+            }
+            
+            this.toggleButtons();
+        })
+    }
+
     getAudio(box, coordinates, date) {
         (async() => {
             if(!navigator.mediaDevices || !window.MediaRecorder) {
@@ -70,49 +117,12 @@ export default class Media {
                     audio:true,
                     video:false,
                 });
-                const recorder = new MediaRecorder(stream);
-                const chunks = [];
                 
-                recorder.addEventListener('start', (evt) => {
-                    this.runTimer();
-                    
-                    const saveStream = () => {
-                        this.save = 'save';
-                        recorder.stop();
-                        stream.getTracks().forEach(track => track.stop());
-                        this.saveButton.removeEventListener('click', saveStream);
-                        this.cancelButton.removeEventListener('click', stopStream);
-                    }
-                    const stopStream = () => {
-                        recorder.stop();
-                        stream.getTracks().forEach(track => track.stop());
-                        this.cancelButton.removeEventListener('click', stopStream);
-                        this.saveButton.removeEventListener('click', saveStream);
-                    }
-                    
-                    this.saveButton.addEventListener('click', saveStream);
-                    this.cancelButton.addEventListener('click', stopStream);
-                });
-                
-                recorder.addEventListener("dataavailable", (evt) => {
-                    chunks.push(evt.data); 
-                });
-                
-                recorder.addEventListener('stop', (evt) => {
-                    this.stopTimer();
-                    
-                    if(this.save === 'save') {
-                        const blob = new Blob(chunks);
-                        const audioSrc = URL.createObjectURL(blob);
-                        this.createAudioElement(box, audioSrc, coordinates, date);
-                        this.messages.lastElementChild.scrollIntoView(true);
-                        this.save = null;
-                    }
-                    
-                    this.toggleButtons();
-                })
-                
-                recorder.start();
+                this.recorder = new MediaRecorder(stream);
+                this.recorderStartListener(stream);
+                this.recorderAvailableListener();
+                this.recorderStopListener(box, coordinates, date);
+                this.recorder.start();
                     
             } catch(e) {
                 console.error(e);
