@@ -14,11 +14,11 @@ export default class Media {
         this.chunks = [];
     }
 
-    createAudioElement(box, src, coordinates, date) {
+    createMediaElement(box, src, coordinates, date, mediaTeg) {
         box.insertAdjacentHTML('beforeend', `
             <li class="messages__box">
                 <div class="messages__wrapper">
-                    <audio class="audio" controls src="${src}"></audio>
+                    <${mediaTeg} class="${mediaTeg}" controls src="${src}"></${mediaTeg}>
                     <span class="messages__coordinates">[${coordinates}]</span>
                 </div>
                 <time class="messages__time">${date}</time>   
@@ -91,37 +91,38 @@ export default class Media {
         });
     }
 
-    recorderStopListener(box, coordinates, date) {
+    recorderStopListener(box, coordinates, date, createEl, media) {
         this.recorder.addEventListener('stop', (evt) => {
             this.stopTimer();
             
             if(this.save === 'save') {
                 const blob = new Blob(this.chunks);
                 const audioSrc = URL.createObjectURL(blob);
-                this.createAudioElement(box, audioSrc, coordinates, date);
+                createEl(box, audioSrc, coordinates, date, media)
                 this.messages.lastElementChild.scrollIntoView(true);
                 this.save = null;
             }
             
             this.toggleButtons();
+            this.chunks = [];
         })
     }
 
-    getAudio(box, coordinates, date) {
+    getMedia(box, coordinates, date, mediaTeg, video = false) {
         (async() => {
             if(!navigator.mediaDevices || !window.MediaRecorder) {
                 
                 return;
             } try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    audio:true,
-                    video:false,
+                    audio: true,
+                    video: video
                 });
                 
                 this.recorder = new MediaRecorder(stream);
                 this.recorderStartListener(stream);
                 this.recorderAvailableListener();
-                this.recorderStopListener(box, coordinates, date);
+                this.recorderStopListener(box, coordinates, date, this.createMediaElement, mediaTeg);
                 this.recorder.start();
                     
             } catch(e) {

@@ -31,8 +31,8 @@ export default class Controller {
             this.messages.lastElementChild.scrollIntoView(true);
         }
 
-        
-        this.audioListener()
+        this.audioListener();
+        this.videoListener();
     }
 
     getDate() {
@@ -137,7 +137,14 @@ export default class Controller {
     audioListener() {
         this.audioButton.addEventListener('click', () => {
             this.toggleButtons();
-            this.media.getAudio(this.messages, this.currentGeolocation, this.getDate());
+            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'audio');
+        });
+    }
+    
+    videoListener() {
+        this.videoButton.addEventListener('click', () => {
+            this.toggleButtons();
+            this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', true);
         });
     }
 
