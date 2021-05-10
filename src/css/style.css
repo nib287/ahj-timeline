@@ -234,6 +234,11 @@ label, .modal__input {
   display: none;
 }
 
+.video {
+  margin: 0 10px 10px 0;
+  width: 200px;
+}
+
 @media (max-width: 419px) {
   .main {
     height: 100%;
