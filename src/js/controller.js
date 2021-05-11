@@ -144,16 +144,14 @@ export default class Controller {
     videoListener() {
         let videoOptions = null;
         const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
-        const computerOptions = {
-            width: {ideal: 1920},
-            height: {ideal: 1080},
-        }
+
+        const computerOptions = true
         const mobileOptions = {
-            width: { ideal: 1080 },
-            height: { ideal: 1920 },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
             facingMode: "environment"
         }
-        
+
         isMobile ? videoOptions = mobileOptions : videoOptions = computerOptions;
        
         this.videoButton.addEventListener('click', () => {
@@ -163,5 +161,3 @@ export default class Controller {
     } 
     
 } 
-
-// { facingMode: { exact: "user" }
