@@ -1,5 +1,9 @@
 export default class Media {
     constructor() {
+        
+        this.dubleStream = null;
+        this.dubleStreamElement = document.getElementById('dubleStream');
+        this.messagesBox = document.getElementsByClassName('messages__box').item(0);
         this.audioButton = document.getElementsByClassName('form__audio').item(0);
         this.videoButton = document.getElementsByClassName('form__video').item(0);
         this.saveButton = document.getElementsByClassName('form__save').item(0);
@@ -82,6 +86,10 @@ export default class Media {
             
             this.saveButton.addEventListener('click', saveStream);
             this.cancelButton.addEventListener('click', stopStream);
+
+            this.playDubleStream();
+            
+
         });
     }
 
@@ -91,14 +99,15 @@ export default class Media {
         });
     }
 
-    recorderStopListener(box, coordinates, date, createEl, media) {
+    recorderStopListener(box, coordinates, date, createEl, mediaTeg) {
         this.recorder.addEventListener('stop', (evt) => {
             this.stopTimer();
+            this.stopDubleStream();
             
             if(this.save === 'save') {
                 const blob = new Blob(this.chunks);
                 const audioSrc = URL.createObjectURL(blob);
-                createEl(box, audioSrc, coordinates, date, media)
+                createEl(box, audioSrc, coordinates, date, mediaTeg)
                 this.messages.lastElementChild.scrollIntoView(true);
                 this.save = null;
             }
@@ -129,6 +138,28 @@ export default class Media {
                 console.error(e);
             }
         })();
-     }
+    }
+
+    playDubleStream() {
+        (async() => { 
+            try {
+                this.messagesBox.classList.toggle('hidden');
+                this.dubleStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: true,
+                });
+                this.dubleStreamElement.srcObject = this.dubleStream;
+                this.dubleStreamElement.play();
+            } catch(e) {
+                console.error(e);
+            }
+        })();
+    }
+
+    stopDubleStream() {
+        this.dubleStream.getTracks().forEach(track => track.stop());
+        this.dubleStream.srcObject = null;
+        this.messagesBox.classList.toggle('hidden');
+    }
 }
 
