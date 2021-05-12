@@ -1,8 +1,7 @@
 export default class Media {
     constructor() {
-        
         this.dubleStream = null;
-        this.dubleStreamElement = document.getElementById('dubleStream');
+        this.currentVideoMessage = null;
         this.messagesBox = document.getElementsByClassName('messages__box').item(0);
         this.audioButton = document.getElementsByClassName('form__audio').item(0);
         this.videoButton = document.getElementsByClassName('form__video').item(0);
@@ -18,18 +17,7 @@ export default class Media {
         this.chunks = [];
     }
 
-    createMediaElement(box, src, coordinates, date, mediaTeg) {
-        box.insertAdjacentHTML('beforeend', `
-            <li class="messages__box">
-                <div class="messages__wrapper">
-                    <${mediaTeg} class="${mediaTeg}" controls src="${src}"></${mediaTeg}>
-                    <span class="messages__coordinates">[${coordinates}]</span>
-                </div>
-                <time class="messages__time">${date}</time>   
-            </li>
-        `);
-    }
-
+    
     toggleButtons() {
         this.videoButton.classList.toggle('hidden');
         this.audioButton.classList.toggle('hidden');
@@ -66,7 +54,8 @@ export default class Media {
         this.min = 0;
     }
 
-    recorderStartListener(stream) {
+    recorderStartListener(stream, media) {
+       
         this.recorder.addEventListener('start', (evt) => {
             this.runTimer();
             
@@ -82,14 +71,15 @@ export default class Media {
                 stream.getTracks().forEach(track => track.stop());
                 this.cancelButton.removeEventListener('click', stopStream);
                 this.saveButton.removeEventListener('click', saveStream);
+                this.currentVideoMessage.remove();
             }
             
             this.saveButton.addEventListener('click', saveStream);
             this.cancelButton.addEventListener('click', stopStream);
-
-            this.playDubleStream();
-            
-
+           
+            if(media == 'video') {
+                this.playDubleStream(); 
+            }
         });
     }
 
@@ -99,25 +89,38 @@ export default class Media {
         });
     }
 
-    recorderStopListener(box, coordinates, date, createEl, mediaTeg) {
+    recorderStopListener(box, coordinates, date, createEl, media) {
         this.recorder.addEventListener('stop', (evt) => {
             this.stopTimer();
-            this.stopDubleStream();
+            if(media == 'video') this.stopDubleStream(); 
             
             if(this.save === 'save') {
                 const blob = new Blob(this.chunks);
-                const audioSrc = URL.createObjectURL(blob);
-                createEl(box, audioSrc, coordinates, date, mediaTeg)
-                this.messages.lastElementChild.scrollIntoView(true);
-                this.save = null;
+                const mediaSrc = URL.createObjectURL(blob);
+                
+                if(media == 'audio') {
+                    createEl(box, mediaSrc, coordinates, date, media)
+                } else {
+                    this.createVideoMessage(coordinates, date, mediaSrc); 
+                }               
             }
             
             this.toggleButtons();
             this.chunks = [];
+
+            this.scrollToLastmessage();
+            this.save = null;
         })
     }
 
-    getMedia(box, coordinates, date, mediaTeg, video = false) {
+    scrollToLastmessage() {
+        const isMessages = this.messages.hasChildNodes();
+        if(isMessages) {
+            this.messages.lastElementChild.scrollIntoView(true);
+        }
+    } 
+
+    getMedia(box, coordinates, date, media, video = false) {    
         (async() => {
             if(!navigator.mediaDevices || !window.MediaRecorder) {
                 
@@ -129,10 +132,11 @@ export default class Media {
                 });
                 
                 this.recorder = new MediaRecorder(stream);
-                this.recorderStartListener(stream);
+                this.recorderStartListener(stream, media);
                 this.recorderAvailableListener();
-                this.recorderStopListener(box, coordinates, date, this.createMediaElement, mediaTeg);
+                this.recorderStopListener(box, coordinates, date, this.createAudioElement, media);
                 this.recorder.start();
+                setTimeout(() => this.scrollToLastmessage(), 300);
                     
             } catch(e) {
                 console.error(e);
@@ -143,13 +147,12 @@ export default class Media {
     playDubleStream() {
         (async() => { 
             try {
-                this.messagesBox.classList.toggle('hidden');
                 this.dubleStream = await navigator.mediaDevices.getUserMedia({
                     audio: false,
                     video: true,
                 });
-                this.dubleStreamElement.srcObject = this.dubleStream;
-                this.dubleStreamElement.play();
+                
+                this.createVideoPlayer();
             } catch(e) {
                 console.error(e);
             }
@@ -159,7 +162,56 @@ export default class Media {
     stopDubleStream() {
         this.dubleStream.getTracks().forEach(track => track.stop());
         this.dubleStream.srcObject = null;
-        this.messagesBox.classList.toggle('hidden');
     }
-}
 
+    createVideoPlayer() {
+        const videoEl = document.createElement('video');
+        videoEl.classList.add('video');
+        videoEl.setAttribute('controls', 'controls');
+        videoEl.srcObject = this.dubleStream;
+        
+        const messagesWrapper = document.createElement('div');
+        messagesWrapper.classList.add('messages__wrapper');
+        messagesWrapper.append(videoEl)
+        
+        this.currentVideoMessage = document.createElement('li');
+        this.currentVideoMessage.classList.add('messages__box');
+        this.currentVideoMessage.append(messagesWrapper);
+        
+        this.messages.append(this.currentVideoMessage);
+        videoEl.play();
+    }
+
+
+    createVideoMessage(coordinates, date, mediaSrc) {
+        const lastMessage = this.messages.lastElementChild;
+    
+        const time = document.createElement('time');
+        time.classList.add('messages__time');
+        time.innerText = date;
+        lastMessage.append(time);
+
+        const messagesWrapper = lastMessage.getElementsByClassName('messages__wrapper').item(0);
+        const messagesCoordinates = document.createElement('span');
+        messagesCoordinates.classList.add('messages__coordinates');
+        messagesCoordinates.innerText = `[${coordinates}]`;
+        messagesWrapper.append(messagesCoordinates);
+        
+        const video = lastMessage.getElementsByClassName('video').item(0);
+        video.srcObject = null
+        video.src = mediaSrc;
+    }
+
+    createAudioElement(box, src, coordinates, date, mediaTeg) {
+        box.insertAdjacentHTML('beforeend', `
+            <li class="messages__box">
+                <div class="messages__wrapper">
+                    <${mediaTeg} class="${mediaTeg}" controls src="${src}"></${mediaTeg}>
+                    <span class="messages__coordinates">[${coordinates}]</span>
+                </div>
+                <time class="messages__time">${date}</time>   
+            </li>
+        `);
+    }
+
+}

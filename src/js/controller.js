@@ -1,7 +1,6 @@
 export default class Controller {
-    constructor(geolocation, create, media) {
+    constructor(geolocation, media) {
         this.geolocation = geolocation;
-        this.create = create;
         this.media = media;
         this.messages = document.getElementsByClassName('messages').item(0);
         this.form = document.getElementsByClassName('form').item(0);
@@ -18,21 +17,27 @@ export default class Controller {
         this.saveButton = document.getElementsByClassName('form__save').item(0);
         this.cancelButton = document.getElementsByClassName('form__cancel').item(0);
         this.timer = document.getElementsByClassName('form__timer').item(0);
-        
     }
 
     init() {
         this.formListener();
         this.modalListener();
         this.getCurrentGeolocation();
-        
-        const isMessages = this.messages.hasChildNodes();
-        if(isMessages) {
-            this.messages.lastElementChild.scrollIntoView(true);
-        }
-
+        // this.scrollToLastmessage();
         this.audioListener();
         this.videoListener();
+    }
+
+    createElement(box, text, coordinates, date) {
+        box.insertAdjacentHTML('beforeend', `
+            <li class="messages__box">
+                <div class="messages__wrapper">
+                    <p class="messages__text">${text}</p>
+                    <span class="messages__coordinates">[${coordinates}]</span>
+                </div>
+                <time class="messages__time">${date}</time>   
+            </li>
+        `);
     }
 
     getDate() {
@@ -72,7 +77,7 @@ export default class Controller {
             e.preventDefault();
             if(this.currentGeolocation) {
                 if(this.formInput.value) {
-                    this.create.element(this.messages, this.formInput.value, this.currentGeolocation, this.getDate());
+                    this.createElement(this.messages, this.formInput.value, this.currentGeolocation, this.getDate());
                     this.formInput.value = '';
                     this.messages.lastElementChild.scrollIntoView(true);
                 }
@@ -134,6 +139,15 @@ export default class Controller {
         this.cancelButton.classList.toggle('hidden');
     }
 
+    scrollToLastmessage() {
+        const isMessages = this.messages.hasChildNodes();
+        
+        if(isMessages) {
+            console.log('jack');
+            this.messages.lastElementChild.scrollIntoView(true);
+        }
+    }
+
     audioListener() {
         this.audioButton.addEventListener('click', () => {
             this.toggleButtons();
@@ -158,6 +172,5 @@ export default class Controller {
             this.toggleButtons();
             this.media.getMedia(this.messages, this.currentGeolocation, this.getDate(), 'video', videoOptions);
         });
-    } 
-    
+    }   
 } 
