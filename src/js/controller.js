@@ -163,7 +163,7 @@ export default class Controller {
         const mobileOptions = {
             width: { ideal: 1920 },
             height: { ideal: 1080 },
-            facingMode: "environment"
+            facingMode: { exact: "environment" }
         }
 
         isMobile ? videoOptions = mobileOptions : videoOptions = computerOptions;
