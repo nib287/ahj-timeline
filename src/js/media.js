@@ -149,7 +149,11 @@ export default class Media {
             try {
                 this.dubleStream = await navigator.mediaDevices.getUserMedia({
                     audio: false,
-                    video: true,
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
                 });
                 
                 this.createVideoPlayer();
