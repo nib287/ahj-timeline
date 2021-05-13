@@ -156,18 +156,18 @@ export default class Controller {
     }
     
     videoListener() {
-        let videoOptions = null;
-        const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+        let videoOptions = true;
+        // const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
 
-        const computerOptions = true
-        const mobileOptions = {
-            // width: { ideal: 1920 },
-            // height: { ideal: 1080 },
-            facingMode: { exact: "environment" }
+        // const computerOptions = true
+        // const mobileOptions = {
+        //     // width: { ideal: 1920 },
+        //     // height: { ideal: 1080 },
+        //     facingMode: { exact: "environment" }
             
-        }
+        // }
 
-        isMobile ? videoOptions = mobileOptions : videoOptions = computerOptions;
+        // isMobile ? videoOptions = mobileOptions : videoOptions = computerOptions;
        
         this.videoButton.addEventListener('click', () => {
             this.toggleButtons();

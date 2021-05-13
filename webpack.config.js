@@ -37,6 +37,7 @@ module.exports = {
         hot: true,
         port: 8095
     },
+
     module: {
         rules: [
             {
