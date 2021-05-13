@@ -156,9 +156,10 @@ export default class Controller {
     }
     
     videoListener() {
-        let videoOptions = { facingMode: { exact: "environment" } }
-        // const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
-
+        
+        const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+        alert(isMobile)
+        let videoOptions = { facingMode: "environment" }
         // const computerOptions = true
         // const mobileOptions = {
         //     // width: { ideal: 1920 },
